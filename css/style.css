@@ -1,0 +1,323 @@
+html, body {
+    font-family: roboto, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    height: 100%;
+    position: relative;
+}
+
+h1 {
+    color: #444;
+    font-size: 24px;
+    margin: 0 0 10px 0;
+}
+
+#map {
+    bottom: 0px;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    right: 0px;
+}
+
+.wrapper {
+    padding: 35px;
+}
+
+.listings-container {
+    background: #fff;
+    min-height: 100%;
+    line-height: 35px;
+    padding: 0;
+    text-align: left;
+    color: #444;
+    position: relative;
+    z-index: 1;
+    display: block;
+}
+
+.listings li {
+    cursor: pointer;
+    list-style: none;
+}
+
+#search {
+    padding: 10px 10px 10px 0;
+    border: none;
+    font-size: 15px;
+    width: 100%;
+    background: none;
+    color: #444;
+}
+
+#search:focus {
+    outline: none;
+}
+
+.listings {
+    padding-left: 0;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 0;
+}
+
+.selected-location {
+    font-weight: bold;
+}
+
+/* Markers */
+.markerwindow {
+    padding: 25px;
+    background-size: cover;
+    width: 210px;
+}
+
+.markerwindow .bar-img {
+    max-width: 300px;
+    position: absolute;
+    top: 0;
+    z-index: 0;
+    left: 0;
+    height: auto;
+    width: 100%;
+}
+
+.overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-size: cover;
+}
+
+.overlay:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    background: rgba(0,0,0,.6);
+}
+
+.markerwindow h3 {
+    margin-top:0;   
+}
+
+.markerwindow h3, 
+.markerwindow p, 
+.markerwindow a {
+    position: relative;
+    z-index: 1;
+    color: #fff;
+}
+
+.markerwindow a {
+    text-decoration: none;
+    color: #eaf376
+}
+
+.markerwindow.no-photo h3, 
+.markerwindow.no-photo p {
+	color:#444;
+}
+
+.text {
+    font-size: 16px;
+    background: rgba(0,0,0,0.4);
+    width: 100%;
+}
+
+/* mobile menu */
+
+.mobile-menu {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    top: 17px;
+    z-index: 10;
+    left: 30px;
+    display: inline-block;
+    padding: 10px;
+}
+
+.mobile-menu span {
+    display: block;
+    position: absolute;
+    height: 4px;
+    width: 30px;
+    background: #222;
+    border-radius: 20px;
+    opacity: 1;
+    right: 20px;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .25s ease-in-out;
+    -moz-transition: .25s ease-in-out;
+    -o-transition: .25s ease-in-out;
+    transition: .25s ease-in-out;
+}
+
+.mobile-menu span:nth-child(1) {
+    top: 0px;
+}
+
+.mobile-menu span:nth-child(2),
+.mobile-menu span:nth-child(3) {
+    top: 10px;
+}
+
+.mobile-menu span:nth-child(4) {
+    top: 20px;
+}
+
+.mobile-menu.open span:nth-child(1) {
+    top: 18px;
+    width: 0%;
+    left: 50%;
+}
+
+.mobile-menu.open span:nth-child(2) {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.mobile-menu.open span:nth-child(3) {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.mobile-menu.open span:nth-child(4) {
+    top: 18px;
+    width: 0%;
+    left: 50
+}
+
+html, body, [canvas=container], [off-canvas] {
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+/**
+ * Canvas
+ */
+
+[canvas] {
+	z-index: 1;
+}
+
+[canvas=container] {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	position: relative;
+	background-color: white; /* Basic background color, overwrite this in your own css. */
+	-webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS devices, may be removed by setting to 'auto' in your own CSS. */
+}
+
+[canvas=container]:before, [canvas=container]:after {
+	clear: both;
+	content: '';
+	display: table;
+}
+
+/**
+ * Off-Canavs
+ */
+
+[off-canvas] {
+	display: none;
+	position: fixed;
+	overflow: hidden;
+	overflow-y: auto;
+	 /* Basic background color, overwrite this in your own css. */
+	 /* Basic colors, overwrite this in your own css. */
+	-webkit-overflow-scrolling: touch; /* Enables momentum scrolling on iOS devices, may be removed by setting to 'auto' in your own CSS. */
+}
+
+[off-canvas*=bottom] {
+	width: 100%;
+	height: 255px;
+	bottom: 0;
+}
+
+[off-canvas*=reveal] {
+	z-index: 0;
+}
+
+[off-canvas*=push] {
+	z-index: 1;
+}
+
+[off-canvas*=overlay] {
+	z-index: 9999;
+}
+
+[off-canvas*=shift] {
+	z-index: 0;
+}
+
+/**
+ * Animation
+ */
+
+[canvas], [off-canvas] {
+	-webkit-transform: translate( 0px, 0px );
+	    -ms-transform: translate( 0px, 0px );
+	        transform: translate( 0px, 0px );
+	-webkit-transition: -webkit-transform 300ms;
+	        transition:         transform 300ms;
+	-webkit-backface-visibility: hidden; /* Prevents flickering, may be removed if experiencing problems with fixed background images in Chrome. */
+}
+
+[off-canvas*=shift][off-canvas*=bottom] {
+	-webkit-transform: translate( 0px, -50% );
+	        transform: translate( 0px, -50% );
+}
+
+@media screen and (min-width: 768px) {
+    .mobile-menu {
+        display: none;
+    }
+    
+    .listings-container {
+        width: 320px;
+        position:absolute;
+    }
+
+    #map {
+        left: 320px;
+    }
+
+    .markerwindow {
+        padding: 35px;
+        width: 280px;
+    }
+    .markerwindow h3 {
+       margin-top:inherit;   
+    }
+}
