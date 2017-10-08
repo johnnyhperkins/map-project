@@ -388,7 +388,6 @@ var ViewModel = function() {
     var self = this;
     this.listingList = ko.observableArray([]);
     this.query = ko.observable('');
-
     locations.forEach(function(location) {
         self.listingList.push( new Listing(location) );
     });
