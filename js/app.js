@@ -209,18 +209,21 @@ function initMap() {
           id: i
         });
         markers.push(marker);
-        marker.addListener('click', function() {
-          var thisTitle = this.title;
-          $('.listings li').each(function(){
-            if(thisTitle == $(this).data('title')) {
-              $(this).addClass('selected-location');
-            } else {
-              $(this).removeClass('selected-location');
-            }
-          });
-          populateInfoWindow(this, largeInfowindow);
-        });
     }
+    markers.forEach(function(marker) {
+      marker.addListener('click', function() {
+        var thisTitle = this.title;
+        $('.listings li').each(function(){
+          if(thisTitle == $(this).data('title')) {
+            $(this).addClass('selected-location');
+          } else {
+            $(this).removeClass('selected-location');
+          }
+        });
+        populateInfoWindow(this, largeInfowindow);
+      });
+    }
+    
     showListings();
 }
 
@@ -391,7 +394,6 @@ var ViewModel = function() {
     locations.forEach(function(location) {
         self.listingList.push( new Listing(location) );
     });
-
     //inspiration for this function was found here: http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
     this.filteredResults = ko.computed(function() {
         if(self.query()) {
@@ -410,17 +412,14 @@ var ViewModel = function() {
                 markers[i].setMap(map);
             }
             return self.listingList();
-        }}, this);  
-
+        }}, this);
     this.selectedListing = function(selectedListing){
         markers.forEach(function(marker) {
-            if(marker['title'] == selectedListing.title()) {
+            if(marker.title == selectedListing.title()) {
                 new google.maps.event.trigger( marker, 'click' );
                 marker.setIcon(makeMarkerIcon('FFFF24'));
             } 
-        });
-        
+        });  
     };
-
-}
+};
 ko.applyBindings(new ViewModel)();
