@@ -16,6 +16,14 @@ h1 {
     margin: 0 0 10px 0;
 }
 
+.error {
+	color:#bbb;
+	position:absolute;
+	top:35%;
+	width:100%;
+	text-align:center;
+}
+
 #map {
     bottom: 0px;
     height: 100%;

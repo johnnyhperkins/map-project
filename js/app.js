@@ -4,214 +4,52 @@ var fourSqCID = "3DJQTVJPRQAJGCLCKVFM4AZCT4MMXIT2ITZ54XU1O3MXVNXF";
 var fourSqSecret = "0LTLRU4DLZQ1EIL0HHSHF2HPWBCXKPL22CRRH2ZERTC513OX";
 var initwindowsize = $(window).width();
 
+function mapError() {
+  $("#map").html("<h1 class='error'>There was a problem loading the map. <br>Please check your connection or try again later.</h1>");
+}
+
 function initMap() {
-    var styles = [
-        {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#e9e9e9"
-                },
-                {
-                    "lightness": 17
-                }
-            ]
-        },
-        {
-            "featureType": "landscape",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#f5f5f5"
-                },
-                {
-                    "lightness": 20
-                }
-            ]
-        },
-        {
-            "featureType": "road.highway",
-            "elementType": "geometry.fill",
-            "stylers": [
-                {
-                    "color": "#ffffff"
-                },
-                {
-                    "lightness": 17
-                }
-            ]
-        },
-        {
-            "featureType": "road.highway",
-            "elementType": "geometry.stroke",
-            "stylers": [
-                {
-                    "color": "#ffffff"
-                },
-                {
-                    "lightness": 29
-                },
-                {
-                    "weight": 0.2
-                }
-            ]
-        },
-        {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#ffffff"
-                },
-                {
-                    "lightness": 18
-                }
-            ]
-        },
-        {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#ffffff"
-                },
-                {
-                    "lightness": 16
-                }
-            ]
-        },
-        {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#f5f5f5"
-                },
-                {
-                    "lightness": 21
-                }
-            ]
-        },
-        {
-            "featureType": "poi.park",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#dedede"
-                },
-                {
-                    "lightness": 21
-                }
-            ]
-        },
-        {
-            "elementType": "labels.text.stroke",
-            "stylers": [
-                {
-                    "visibility": "on"
-                },
-                {
-                    "color": "#ffffff"
-                },
-                {
-                    "lightness": 16
-                }
-            ]
-        },
-        {
-            "elementType": "labels.text.fill",
-            "stylers": [
-                {
-                    "saturation": 36
-                },
-                {
-                    "color": "#333333"
-                },
-                {
-                    "lightness": 40
-                }
-            ]
-        },
-        {
-            "elementType": "labels.icon",
-            "stylers": [
-                {
-                    "visibility": "off"
-                }
-            ]
-        },
-        {
-            "featureType": "transit",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#f2f2f2"
-                },
-                {
-                    "lightness": 19
-                }
-            ]
-        },
-        {
-            "featureType": "administrative",
-            "elementType": "geometry.fill",
-            "stylers": [
-                {
-                    "color": "#fefefe"
-                },
-                {
-                    "lightness": 20
-                }
-            ]
-        },
-        {
-            "featureType": "administrative",
-            "elementType": "geometry.stroke",
-            "stylers": [
-                {
-                    "color": "#fefefe"
-                },
-                {
-                    "lightness": 17
-                },
-                {
-                    "weight": 1.2
-                }
-            ]
-        }
-    ];
     map = new google.maps.Map(document.getElementById("map"), {
         center: {lat: 40.718525, lng:-73.955106},
         zoom: 13,
         styles: styles,
         mapTypeControl: false
     });
-
     var defaultIcon = makeMarkerIcon();
-  
     var largeInfowindow = new google.maps.InfoWindow();
     
     //recenter on resize. Code from https://codepen.io/hubpork/pen/xriIz
     google.maps.event.addDomListener(window, "resize", function() {
       var center = map.getCenter();
       google.maps.event.trigger(map, "resize");
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0; i < markers.length; i++) {
+        bounds.extend(markers[i].position);
+      }
       map.setCenter(center);
+      map.fitBounds(bounds);
     });
     for (var i = 0; i < locations.length; i++) {
         var position = locations[i].location;
         var title = locations[i].title;
-        var marker = new google.maps.Marker({
+        markers.push(new google.maps.Marker({
           position: position,
           title: title,
           animation: google.maps.Animation.DROP,
           icon: defaultIcon,
           id: i
-        });
-        markers.push(marker);
+        }));
     }
     markers.forEach(function(marker) {
       marker.addListener('click', function() {
+        markers.forEach(function(marker) {
+          marker.setAnimation(null);
+        });
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
         var thisTitle = this.title;
         $('.listings li').each(function(){
           if(thisTitle == $(this).data('title')) {
@@ -222,8 +60,7 @@ function initMap() {
         });
         populateInfoWindow(this, largeInfowindow);
       });
-    }
-    
+    });
     showListings();
 }
 
@@ -308,12 +145,13 @@ function getFourSquareData(marker,infowindow) {
     .fail(function() {
       photoSrc = false;
       console.log("error getting photo");
+      //in addition to logging the error to the console, text is shown in the infowindow indicating to the user that there's no photo available for the location.
     })
     .always(function(photojson) {
+      var markerContent = '';
       if(photoSrc) {
         photoSrc = photojson.response.photos.items[0].prefix + 'cap300' + photojson.response.photos.items[0].suffix;
       }
-      var markerContent = '';
       photoSrc ? markerContent = '<div class="markerwindow">' : markerContent = '<div class="markerwindow no-photo">';
       photoSrc ? markerContent += '<div class="overlay" style="background-image:url('+ photoSrc +')"></div><div class="text">' : '';
       markerContent += '<h3>' + marker.title + '</h3>';
@@ -330,7 +168,10 @@ function getFourSquareData(marker,infowindow) {
       if(json.hasOwnProperty('menu') && json.menu.hasOwnProperty('url')) {
         markerContent += '<br /><a href="'+ json.menu.url +'" target="_blank">View menu</a>';
       }
-      photoSrc.length ? markerContent += '</div></div>' : '</div>';
+      if(!photoSrc) {
+        markerContent += '<p><em>No photo available for this location</em></p>';
+      }
+      photoSrc ? markerContent += '</div></div>' : '</div>';
       marker.markerContent = markerContent;
       infowindow.setContent(marker.markerContent);
       infowindow.maxWidth = 300;
@@ -370,6 +211,8 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.marker = marker;
         map.panTo(marker.getPosition());
         infowindow.addListener('closeclick', function() {
+            $('.selected-location').removeClass('selected-location');
+            marker.setAnimation(null);
             infowindow.marker = null;
         });
         //check if data has already been pulled from foursquare
@@ -417,9 +260,8 @@ var ViewModel = function() {
         markers.forEach(function(marker) {
             if(marker.title == selectedListing.title()) {
                 new google.maps.event.trigger( marker, 'click' );
-                marker.setIcon(makeMarkerIcon('FFFF24'));
             } 
         });  
     };
 };
-ko.applyBindings(new ViewModel)();
+ko.applyBindings(new ViewModel());
